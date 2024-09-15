@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#051D33] to-[#0A3A66]">
+    <div class="w-full max-w-md px-4">
+        <div class="bg-[#051D33] shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 border-2 border-[#FFC107]">
+            <h2 class="text-3xl font-bold mb-6 mt-6 text-center text-[#FFC107]">Register</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}" class="block text-[#FFC107] text-sm font-bold mb-2">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="flex items-center justify-between mt-8 mb-4"> <!-- Αυξήσαμε το top margin και προσθέσαμε bottom margin -->
+                    <button type="submit" class="bg-[#FFC107] hover:bg-[#FFD54F] text-[#051D33] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-all duration-300">
+                        Register
+                    </button>
+                    <a href="{% url 'login' %}" class="bg-[#0A3A66] hover:bg-[#051D33] text-[#FFC107] hover:text-[#FFD54F] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-all duration-300 border border-[#FFC107]">
+                        Back to Login
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="email"], input[type="password"] {
+        appearance: none;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid #FFC107;
+        border-radius: 0.25rem;
+        background-color: #0A3A66;
+        color: white;
+    }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+        inputs.forEach(input => {
+            input.classList.add('appearance-none', 'border', 'rounded', 'w-full', 'py-3', 'px-4', 'mb-3', 'leading-tight', 'focus:outline-none', 'focus:shadow-outline', 'bg-[#0A3A66]', 'text-white', 'border-[#FFC107]');
+        });
+    });
+</script>
+{% endblock %}

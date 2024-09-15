@@ -1,10 +1,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
+<style>
+    body {
+        background: linear-gradient(to bottom, #051D33, #0A3A66);
+    }
+    
+    .container {
+        background-color: #051D33;
+        border: 2px solid #FFC107;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    h2 {
+        color: #FFC107;
+    }
+    
+    .btn-primary {
+        background-color: #FFC107;
+        border-color: #FFC107;
+        color: #051D33;
+    }
+    
+    .btn-primary:hover {
+        background-color: #FFD54F;
+        border-color: #FFD54F;
+    }
+
+    .btn-secondary {
+        background-color: #0A3A66;
+        border-color: #FFC107;
+        color: #FFC107;
+    }
+
+    .btn-secondary:hover {
+        background-color: #051D33;
+        color: #FFD54F;
+    }
+
+    input[type="text"], input[type="password"] {
+        background-color: #0A3A66;
+        color: #FFFFFF;
+        border: 1px solid #FFC107;
+    }
+
+    label {
+        color: #FFC107;
+    }
+</style>
+<div class="flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md">
-        <div class="bg-white shadow-md rounded px-8 py-6">
-            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+        <div class="bg-[#051D33] shadow-md rounded px-8 py-6 border-2 border-[#FFC107]">
+            <h2 class="text-2xl font-bold mb-6 text-center text-[#FFC107]">Login</h2>
             {% if form.errors %}
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                     <strong>Error:</strong> Please correct the errors below.
@@ -13,23 +61,31 @@
             <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
-                    <input type="text" name="username" value="{{ form.username.value|stringformat:'s' }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-[#FFC107] text-sm font-bold mb-2">Username</label>
+                    <input type="text" name="username" value="{{ form.username.value|stringformat:'s' }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-[#0A3A66] leading-tight focus:outline-none focus:shadow-outline" required>
                     {% if form.username.errors %}
                         <p class="text-red-500 text-xs italic">{{ form.username.errors }}</p>
                     {% endif %}
                 </div>
                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                    <input type="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <label class="block text-[#FFC107] text-sm font-bold mb-2">Password</label>
+                    <input type="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-white bg-[#0A3A66] leading-tight focus:outline-none focus:shadow-outline" required>
                     {% if form.password.errors %}
                         <p class="text-red-500 text-xs italic">{{ form.password.errors }}</p>
                     {% endif %}
                 </div>
-                <div class="flex items-center justify-between">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <div class="flex items-center justify-between mb-4">
+                    <button type="submit" class="bg-[#FFC107] hover:bg-[#FFD54F] text-[#051D33] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-all duration-300">
                         Login
                     </button>
+                    <a href="{% url 'register' %}" class="bg-[#0A3A66] hover:bg-[#051D33] text-[#FFC107] hover:text-[#FFD54F] font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-all duration-300 border border-[#FFC107]">
+                        Register
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="{% url 'password_reset' %}" class="text-[#FFC107] hover:text-[#FFD54F] text-sm">
+                        Forgot Password?
+                    </a>
                 </div>
             </form>
         </div>

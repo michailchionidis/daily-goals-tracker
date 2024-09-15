@@ -1,0 +1,22 @@
+{% load static %}
+
+<nav class="bg-[#051D33] border-b border-[#FFC107]">
+    <div class="max-w-7xl mx-auto" style="padding-left: 3rem; padding-right: 3rem; padding-top:0.5rem;"> <!-- Προσθέσαμε inline padding εδώ -->
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+                <div class="flex-shrink-0" style="padding-left: 2rem;"> <!-- Προσθέσαμε inline padding-left εδώ -->
+                    <img style="height: 3rem; width: auto;" src="{% static 'img/logo.png' %}" alt="achievely.ai"> <!-- Μειώσαμε το μέγεθος του λογότυπου -->
+                </div>
+            </div>
+            <div class="flex items-center">
+                <div class="ml-4 flex items-center md:ml-6" style="padding-right: 2rem;"> <!-- Προσθέσαμε inline padding-right εδώ -->
+                    <a href="{% url 'profile' %}" class="text-[#FFC107] hover:bg-[#0A3A66] px-3 py-2 rounded-md text-sm font-medium">Profile</a>
+                    <form action="{% url 'logout' %}" method="post" class="inline-block ml-2">
+                        {% csrf_token %}
+                        <button type="submit" class="text-[#FFC107] hover:bg-[#0A3A66] px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,8 +1,216 @@
 {% extends 'base.html' %}
+
 {% block content %}
+<style>
+    .goal-modal-content {
+        border: 2px solid #FFC107 !important;
+        max-width: 32rem; /* Προσθέστε αυτή τη γραμμή */
+        width: 100%; /* Προσθέστε αυτή τη γραμμή */
+    }
+
+    .swal2-popup {
+        border: 2px solid #FFC107 !important;
+        background-color: #051D33 !important;
+        color: #FFFFFF !important;
+    }
+
+    .swal2-title, .swal2-content {
+        color: #FFFFFF !important;
+    }
+
+    .swal2-confirm {
+        background-color: #FFC107 !important;
+        color: #051D33 !important;
+    }
+
+    .swal2-cancel {
+        background-color: #6c757d !important;
+    }
+
+
+    #goalModal {
+        z-index: 1000; 
+    }
+
+    #goalModal button {
+        transition: all 0.3s ease-in-out;
+        font-weight: 500;
+    }
+
+    #goalModal button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #cancelGoalBtn {
+        background-color: #6c757d;
+    }
+
+    #cancelGoalBtn:hover {
+        background-color: #5a6268;
+    }
+
+    #saveGoalBtn {
+        background-color: #FFC107;
+        color: #051D33;
+    }
+
+    #saveGoalBtn:hover {
+        background-color: #FFD54F;
+    }
+
+    #cancelGoalBtn, .view-goal-btn {
+        margin-right: 0.25rem; /* Προσθέστε αυτή τη γραμμή */
+    }
+
+    input:required {
+        border-left: 3px solid #FFC107;
+    }
+
+    .error-message {
+        color: #FF4136;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    #userStatistics {
+        font-size: 0.75rem;
+        transition: all 0.3s ease-in-out;
+    }
+
+    #userStatistics:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        min-height: 4rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #FFC107;
+    }
+
+    .stat-label {
+        font-size: 0.625rem;
+        color: #A0AEC0;
+        margin-top: 0.25rem;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&display=swap');
+
+    .marker-effect {
+        position: relative;
+        z-index: 1;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, #FFC107, #FFD54F);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .gradient-text {
+        background: linear-gradient(45deg, #FFC107, #FFD54F);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        position: relative;
+        padding-left: 0.2em; /* Προσθέστε χώρο για το εικονίδιο */
+    }
+
+    /* .gradient-text::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1em;
+        height: 1em;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+    } */
+
+    .marker-effect::after {
+        content: '';
+        position: absolute;
+        left: -0.1em;
+        right: -0.1em;
+        bottom: -0.2em;
+        height: 0.3em;
+        background: linear-gradient(45deg, rgba(255, 193, 7, 0.5), rgba(255, 213, 79, 0.5));
+        z-index: -1;
+        transform: rotate(-1deg);
+    }
+
+    h1 {
+        font-family: 'Inter', sans-serif;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        font-weight: 800;
+        font-size: 3rem;
+        line-height: 1.2;
+    }
+
+    @media (max-width: 640px) {
+        h1 {
+            font-size: 2rem;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        h1 span.marker-effect {
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+
+{% include 'navbar.html' %}
 <div class="min-h-screen bg-gradient-to-b from-[#051D33] to-[#0A3A66] text-white p-16">
     <div class="container mx-auto">
-        <h1 class="text-6xl font-bold mb-16 text-center text-[#FFC107]">Goal Tracker</h1>
+        <div class="flex justify-between items-center mb-16 relative">
+            <h1 class="font-extrabold tracking-tight md:-mb-4 flex flex-col items-start lg:items-start  marker-effect">
+                🤩<span class="gradient-text">Your Daily Goals Tracker</span>
+            </h1>
+            <!-- <div class="w-32 sm:w-36 md:w-40 lg:w-48 h-8 sm:h-9 md:h-10 lg:h-12 overflow-hidden">
+                <img src="static/img/logo.png" alt="achievely.ai" class="w-full h-full object-contain">
+            </div> -->
+            <div id="userStatistics" class="bg-[#0A3A66] p-4 rounded-lg shadow-lg">
+                <h3 class="text-sm font-semibold text-[#FFC107] mb-2">Your Stats 📊</h3>
+                <div class="flex space-x-4">
+                    <div class="stat-item">
+                        <span id="perfectDays" class="stat-value">0%</span>
+                        <span class="stat-label">Perfect Days</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="overallCompletionRate" class="stat-value">0%</span>
+                        <span class="stat-label">Completion</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="last30DaysComparison" class="stat-value">0%</span>
+                        <span class="stat-label">Last 30 Days</span>
+                    </div>
+                    <div class="stat-item">
+                        <span id="allUsersComparison" class="stat-value">0%</span>
+                        <span class="stat-label">vs. All Users</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="bg-[#051D33] bg-opacity-50 rounded-lg p-6 mb-8 border border-[#FFC107]">
             <div class="flex justify-between items-center mb-4">
@@ -52,23 +260,35 @@
 </div>
 
 <!-- Modal for adding/viewing/editing a goal -->
-<div id="goalModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden transition-all duration-300">
-    <div class="relative top-20 mx-auto p-5 border w-3/4 max-w-2xl rounded-md bg-[#051D33] border-[#FFC107]">
+<div id="goalModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border-4 border-[#FFC107] w-[32rem] shadow-lg rounded-md bg-[#051D33] goal-modal-content">
         <div class="mt-3">
-            <h3 id="goalModalTitle" class="text-lg leading-6 font-medium text-[#FFC107] mb-4">Add New Goal</h3>
-            <div class="mb-4">
-                <label for="goalTitle" class="block text-sm font-medium text-gray-300 mb-2">Goal Title</label>
-                <input id="goalTitle" type="text" class="w-full px-3 py-2 border rounded-md bg-[#0A3A66] text-white border-[#FFC107] focus:ring-[#FFC107] focus:border-[#FFC107]" placeholder="Enter goal title">
+            <h3 class="text-xl leading-6 font-medium text-[#FFC107] text-center mb-4" id="modalTitle">Add New Goal</h3>
+            <div class="space-y-4">
+                <div>
+                    <label for="goalTitle" class="block text-sm font-medium text-[#FFC107] mb-1">Title *</label>
+                    <input type="text" id="goalTitle" required class="w-full px-3 py-2 border rounded-md bg-[#0A3A66] text-white" placeholder="Enter goal title">
+                </div>
+                <div>
+                    <label for="goalNotes" class="block text-sm font-medium text-[#FFC107] mb-1">Notes</label>
+                    <textarea id="goalNotes" class="w-full px-3 py-2 border rounded-md bg-[#0A3A66] text-white" placeholder="Enter notes" rows="3"></textarea>
+                </div>
+                <div class="relative">
+                    <label for="goalCategory" class="block text-sm font-medium text-[#FFC107] mb-1">Category</label>
+                    <input type="text" id="goalCategory" class="w-full px-3 py-2 border rounded-md bg-[#0A3A66] text-white" placeholder="Enter category">
+                    <div id="categoryDropdown" class="absolute z-10 w-full mt-1 bg-[#0A3A66] border border-[#FFC107] rounded-md shadow-lg hidden"></div>
+                </div>
+                <div>
+                    <label for="goalPoints" class="block text-sm font-medium text-[#FFC107] mb-1">Points (0-10) *</label>
+                    <input type="number" id="goalPoints" min="0" max="10" required class="w-full px-3 py-2 border rounded-md bg-[#0A3A66] text-white" placeholder="Enter points (0-10)">
+                    <span id="pointsError" class="text-red-500 text-xs hidden">Points are required and must be between 0 and 10.</span>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="goalNotes" class="block text-sm font-medium text-gray-300 mb-2">Notes</label>
-                <textarea id="goalNotes" class="w-full px-3 py-2 border rounded-md bg-[#0A3A66] text-white border-[#FFC107] focus:ring-[#FFC107] focus:border-[#FFC107]" rows="3" placeholder="Enter any additional notes"></textarea>
-            </div>
-            <div class="flex justify-end">
-                <button id="cancelGoalBtn" class="mr-2 px-4 py-2 bg-gray-600 text-white text-base font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300">
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="cancelGoalBtn" class="bg-gray-500 text-white py-2 px-4 rounded-full text-sm hover:bg-gray-600 transition-all duration-300">
                     Cancel
                 </button>
-                <button id="saveGoalBtn" class="px-4 py-2 bg-[#FFC107] text-[#051D33] text-base font-medium rounded-md hover:bg-[#FFD54F] focus:outline-none focus:ring-2 focus:ring-[#FFC107] transition-all duration-300">
+                <button id="saveGoalBtn" class="bg-[#FFC107] text-[#051D33] py-2 px-4 rounded-full text-sm hover:bg-[#FFD54F] transition-all duration-300">
                     Save Goal
                 </button>
             </div>
@@ -86,8 +306,6 @@
         const goalNotes = document.getElementById('goalNotes');
         const saveGoalBtn = document.getElementById('saveGoalBtn');
         const cancelGoalBtn = document.getElementById('cancelGoalBtn');
-        const viewGoalBtns = document.querySelectorAll('.view-goal-btn');
-        const deleteGoalBtns = document.querySelectorAll('.delete-goal-btn');
         const prevDayBtn = document.getElementById('prevDayBtn');
         const nextDayBtn = document.getElementById('nextDayBtn');
         const currentDateElement = document.getElementById('currentDate');
@@ -97,8 +315,20 @@
         let currentGoalId = null;
 
         function openModal(title, goalId = null) {
-            goalModalTitle.textContent = title;
+            const modalTitle = document.getElementById('modalTitle');
+            if (modalTitle) {
+                modalTitle.textContent = title;
+            }
             currentGoalId = goalId;
+            
+            if (!goalId) {
+                // Καθαρισμός των πεδίων για νέο στόχο
+                document.getElementById('goalTitle').value = '';
+                document.getElementById('goalNotes').value = '';
+                document.getElementById('goalCategory').value = '';
+                document.getElementById('goalPoints').value = '';
+            }
+            
             goalModal.classList.remove('hidden');
         }
 
@@ -111,54 +341,6 @@
 
         addGoalBtn.addEventListener('click', function() {
             openModal('Add New Goal');
-        });
-
-        viewGoalBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const goalId = this.getAttribute('data-goal-id');
-                fetch(`/get_goal/${goalId}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        openModal('View/Edit Goal', goalId);
-                        goalTitle.value = data.title;
-                        goalNotes.value = data.notes;
-                    });
-            });
-        });
-
-        deleteGoalBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const goalId = this.getAttribute('data-goal-id');
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, delete it!',
-                    background: '#051D33',
-                    color: '#FFFFFF'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/delete_goal/${goalId}/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': getCookie('csrftoken')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                showAlert('Deleted!', 'Your goal has been deleted.', 'success');
-                                updateGoals(currentDate);
-                            } else {
-                                showAlert('Error', 'Error deleting goal: ' + data.message, 'error');
-                            }
-                        });
-                    }
-                });
-            });
         });
 
         function showAlert(title, text, icon) {
@@ -175,49 +357,6 @@
             });
         }
 
-       
-        saveGoalBtn.addEventListener('click', function() {
-            const title = goalTitle.value;
-            const notes = goalNotes.value;
-            if (title) {
-                const url = currentGoalId ? `/update_goal/${currentGoalId}/` : '/add_goal/';
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({
-                        title: title, 
-                        notes: notes,
-                        date: formatDateForAPI(currentDate)
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || 'Unknown error occurred');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === 'success') {
-                        showAlert('Success', data.message, 'success');
-                        closeModal();
-                        updateGoals(currentDate);
-                    } else {
-                        throw new Error(data.message || 'Unknown error occurred');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('Error', 'Error saving goal: ' + error.message, 'error');
-                });
-            } else {
-                showAlert('Error', 'Please enter a title for the goal', 'warning');
-            }
-        });
 
         cancelGoalBtn.addEventListener('click', closeModal);
 
@@ -299,9 +438,11 @@
                             openModal('View/Edit Goal', goalId);
                             goalTitle.value = data.title;
                             goalNotes.value = data.notes;
+                            document.getElementById('goalCategory').value = data.category || '';
+                            document.getElementById('goalPoints').value = data.points || 0;
                         });
                 });
-            });
+            });;
 
             document.querySelectorAll('.delete-goal-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -342,6 +483,35 @@
             });
         }
 
+        function updateUserStatistics() {
+            fetch('/get_user_statistics/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received statistics data:', data);
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    const [perfectDays, totalDays] = data.perfect_days.split('/');
+                    const perfectDaysPercentage = ((perfectDays / totalDays) * 100).toFixed(1);
+                    
+                    document.getElementById('perfectDays').textContent = `${perfectDaysPercentage}%`;
+                    document.getElementById('overallCompletionRate').textContent = `${data.overall_completion_rate}%`;
+                    document.getElementById('last30DaysComparison').textContent = `${data.last_30_days_completion_rate}%`;
+                    document.getElementById('allUsersComparison').textContent = `${(data.overall_completion_rate - data.all_users_completion_rate).toFixed(1)}%`;
+                })
+                .catch(error => {
+                    console.error('Error fetching user statistics:', error);
+                    document.getElementById('userStatistics').innerHTML += `<p class="text-red-500 text-xs mt-2">Error loading stats: ${error.message}</p>`;
+                });
+        }
+
+
         function updateGoals(date) {
             const formattedDate = formatDateForAPI(date);
             if (!formattedDate) {
@@ -356,19 +526,40 @@
                     return response.json();
                 })
                 .then(data => {
-                    currentDateElement.textContent = `Goals for: ${formatDate(date)}`;
+                    const formattedDate = formatDate(date);
+                    currentDateElement.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <span>Goals for: ${formattedDate}</span>
+                            <span class="text-yellow-400" id="completionPercentage" style="margin-left:0.5rem;">
+                                <span style="font-weight: normal;">(🎯 ${data.completion_percentage}% completed)</span>
+                            </span>
+                        </div>
+                    `;
+
                     if (Array.isArray(data.goals)) {
                         goalsListElement.innerHTML = data.goals.map(goal => `
-                            <div class="flex items-center justify-between bg-[#0A3A66] bg-opacity-50 p-4 rounded-lg transition-all duration-300 hover:bg-opacity-75">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="goal-${goal.id}" ${goal.status === 'completed' ? 'checked' : ''} class="form-checkbox h-5 w-5 text-[#FFC107] transition duration-150 ease-in-out">
-                                    <span class="ml-3 text-lg ${goal.status === 'completed' ? 'line-through text-gray-400' : ''}">${goal.title}</span>
-                                </div>
-                                <div>
-                                    <button class="view-goal-btn bg-[#FFC107] text-[#051D33] py-1 px-3 rounded-full text-sm hover:bg-[#FFD54F] transition-all duration-300 mr-2" data-goal-id="${goal.id}">View/Edit</button>
-                                    <button class="delete-goal-btn bg-red-500 text-white py-1 px-3 rounded-full text-sm hover:bg-red-600 transition-all duration-300" data-goal-id="${goal.id}">Delete</button>
+                        <div class="flex items-center justify-between bg-[#0A3A66] bg-opacity-50 p-4 rounded-lg transition-all duration-300 hover:bg-opacity-75">
+                            <div class="flex items-center flex-grow">
+                                <input type="checkbox" id="goal-${goal.id}" ${goal.status === 'completed' ? 'checked' : ''} class="form-checkbox h-5 w-5 text-[#FFC107] transition duration-150 ease-in-out">
+                                <span class="ml-3 text-lg ${goal.status === 'completed' ? 'line-through text-gray-400' : ''}">${goal.title}</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-yellow-300 px-3 py-2 rounded-full">
+                                    🏷️ <span class="font-bold">${goal.category || 'No category'}</span>
+                                </span>
+                                <span class="text-sm text-yellow-400 px-3 py-2 rounded-full">
+                                    🔥 <span class="font-bold">${goal.points || 0}</span> pts
+                                </span>
+                                <div class="flex space-x-1">
+                                    <button class="view-goal-btn bg-[#FFC107] text-[#051D33] py-2 px-4 rounded-md text-sm hover:bg-[#FFD54F] transition-all duration-300" data-goal-id="${goal.id}">
+                                        <i class="fas fa-edit"></i> <!-- Εικονίδιο View/Edit -->
+                                    </button>
+                                    <button class="delete-goal-btn bg-red-500 text-white py-2 px-4 rounded-md text-sm hover:bg-red-600 transition-all duration-300" data-goal-id="${goal.id}">
+                                        <i class="fas fa-trash"></i> <!-- Εικονίδιο Delete -->
+                                    </button>
                                 </div>
                             </div>
+                        </div>
                         `).join('') || '<p class="text-gray-400 italic">You have no goals for this day. Time to add some!</p>';
                         addEventListeners();
                     } else {
@@ -400,6 +591,98 @@
             currentDate = new Date(); // Χρήση της τρέχουσας ημερομηνίας ως εναλλακτική λύση
             updateGoals(currentDate);
         }
+
+        // Χειρισμός διαφορετικών κατηγοριών:
+        const categoryInput = document.getElementById('goalCategory');
+        const categoryDropdown = document.getElementById('categoryDropdown');
+    
+        if (categoryInput && categoryDropdown) {
+            categoryInput.addEventListener('input', function() {
+                const query = this.value;
+                if (query.length > 1) {
+                    fetch(`/get_categories/?q=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            categoryDropdown.innerHTML = data.categories.map(category => 
+                                `<div class="category-option p-2 hover:bg-gray-100 cursor-pointer">${category.name}</div>`
+                            ).join('');
+                            categoryDropdown.classList.remove('hidden');
+                        });
+                } else {
+                    categoryDropdown.classList.add('hidden');
+                }
+            });
+
+            categoryDropdown.addEventListener('click', function(e) {
+                if (e.target.classList.contains('category-option')) {
+                    categoryInput.value = e.target.textContent;
+                    categoryDropdown.classList.add('hidden');
+                }
+            });
+
+            // Κλείσιμο του dropdown όταν κάνουμε κλικ εκτός
+            document.addEventListener('click', function(e) {
+                if (!categoryInput.contains(e.target) && !categoryDropdown.contains(e.target)) {
+                    categoryDropdown.classList.add('hidden');
+                }
+            });
+        }
+    
+        // Ενημέρωση της συνάρτησης saveGoal
+        function saveGoal() {
+            const title = document.getElementById('goalTitle').value;
+            const notes = document.getElementById('goalNotes').value;
+            const category = document.getElementById('goalCategory').value;
+            const points = document.getElementById('goalPoints').value;
+
+            if (!title) {
+                showAlert('Error', 'Please enter a title for the goal', 'warning');
+                return;
+            }
+
+            if (points === '' || isNaN(points) || points < 0 || points > 10) {
+                pointsError.classList.remove('hidden');
+                return;
+            } else {
+                pointsError.classList.add('hidden');
+            }
+
+            if (title) {
+                const url = currentGoalId ? `/update_goal/${currentGoalId}/` : '/add_goal/';
+                const method = currentGoalId ? 'PUT' : 'POST';
+
+                fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        notes: notes,
+                        category: category,
+                        points: points,
+                        date: formatDateForAPI(currentDate)
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showAlert('Success', currentGoalId ? 'Goal updated successfully' : 'Goal added successfully', 'success');
+                        closeModal();
+                        updateGoals(currentDate);
+                    } else {
+                        showAlert('Error', currentGoalId ? 'Failed to update goal' : 'Failed to add goal', 'error');
+                    }
+                });
+            } else {
+                showAlert('Error', 'Please enter a title for the goal', 'warning');
+            }
+        }
+        
+        saveGoalBtn.addEventListener('click', saveGoal);
+        updateUserStatistics(); 
+            
     });
 </script>
 {% endblock %}
