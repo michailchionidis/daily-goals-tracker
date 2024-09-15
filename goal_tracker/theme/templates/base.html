@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Goal Tracker{% endblock %}</title>
+    {% load static %}
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% block style %}
+    <style>
+        .swal-border {
+            border: 2px solid #FFC107 !important;
+            border-radius: 10px !important;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body class="bg-gray-100">
+    {% block content %}{% endblock %}
+</body>
+</html>
