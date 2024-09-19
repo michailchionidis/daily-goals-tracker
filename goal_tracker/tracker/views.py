@@ -321,3 +321,21 @@ def update_goal(request, goal_id):
 @login_required
 def profile_view(request):
     return render(request, 'profile.html')
+
+@login_required
+def make_goal_recurrent(request, goal_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        recurrent_until = data.get('recurrent_until')
+        until_date = data.get('until_date')
+
+        try:
+            goal = Goal.objects.get(id=goal_id)
+            goal.recurrent_until = recurrent_until
+            goal.until_date = until_date
+            goal.save()
+            return JsonResponse({'status': 'success'})
+        except Goal.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Goal not found'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

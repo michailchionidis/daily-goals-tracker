@@ -16,5 +16,6 @@ urlpatterns = [
     path('get_goals/<str:date>/', views.get_goals, name='get_goals'),
     path('get_categories/', views.get_categories, name='get_categories'),
     path('get_user_statistics/', views.get_user_statistics, name='get_user_statistics'),
+    path('make_goal_recurrent/<int:goal_id>/', views.make_goal_recurrent, name='make_goal_recurrent'),
 ]
 
