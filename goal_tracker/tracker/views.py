@@ -25,6 +25,7 @@ from django.conf import settings
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_http_methods
 
 User = get_user_model()
 
@@ -323,19 +324,39 @@ def profile_view(request):
     return render(request, 'profile.html')
 
 @login_required
+@require_http_methods(["POST"])
 def make_goal_recurrent(request, goal_id):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        recurrent_until = data.get('recurrent_until')
-        until_date = data.get('until_date')
+    data = json.loads(request.body)
+    recurrent_until = data.get('recurrent_until')
+    until_date = data.get('until_date')
 
-        try:
-            goal = Goal.objects.get(id=goal_id)
-            goal.recurrent_until = recurrent_until
-            goal.until_date = until_date
-            goal.save()
-            return JsonResponse({'status': 'success'})
-        except Goal.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Goal not found'})
+    try:
+        goal = Goal.objects.get(id=goal_id, day__user=request.user)
+        
+        if recurrent_until == 'date':
+            until_date = timezone.datetime.strptime(until_date, "%Y-%m-%d").date()
+            max_date = timezone.now().date() + timedelta(days=365)
+            if until_date > max_date:
+                return JsonResponse({'status': 'error', 'message': 'Date cannot exceed one year from now'})
+        elif recurrent_until == 'year':
+            until_date = timezone.now().date() + timedelta(days=365)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid recurrent option'})
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+        goal.recurrent_until = recurrent_until
+        goal.until_date = until_date
+        goal.save()
+        goal.create_recurrent_goals()
+        return JsonResponse({'status': 'success'})
+    except Goal.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Goal not found'})
+
+@login_required
+@require_http_methods(["POST"])
+def stop_recurrent_goal(request, goal_id):
+    try:
+        goal = Goal.objects.get(id=goal_id, day__user=request.user)
+        goal.stop_recurrent_goal()
+        return JsonResponse({'status': 'success', 'message': 'Recurrent goal stopped and future occurrences deleted'})
+    except Goal.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Goal not found'})
